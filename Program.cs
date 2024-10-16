@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using miminal.Dominio.Interfaces;
 using miminal.Dominio.Servicos;
 using Microsoft.AspNetCore.Mvc;
+using miminal.Dominio.ModelViews;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ builder.Services.AddDbContext<DbContexto>(options => {
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Olá Pessoal");
+app.MapGet("/", () => Results.Json(new Home()));
 
 app.MapPost("/login", ([FromBody] LoginDTO loginDTO, IAdministradorServico administradorServico) => {
     if(administradorServico.Login(loginDTO) != null){
