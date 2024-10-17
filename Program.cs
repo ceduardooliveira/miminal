@@ -6,6 +6,7 @@ using miminal.Dominio.Servicos;
 using Microsoft.AspNetCore.Mvc;
 using miminal.Dominio.ModelViews;
 using miminal.Dominio.Entidades;
+using miminal.Dominio.Enuns;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,41 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
     else{
         return Results.Unauthorized();
     }
+}).WithTags("Administradores");
+
+app.MapGet("/administradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) => {
+    return Results.Ok(administradorServico.Todos(pagina));
+}).WithTags("Administradores");
+
+app.MapGet("/Administradores/{id}", ([FromRoute]int id, IAdministradorServico administradorServico) => {
+    var administrador = administradorServico.BuscarPorId(id);
+    if(administrador == null) return Results.NotFound();
+    return Results.Ok(administrador);
+}).WithTags("Administradores");
+
+app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, IAdministradorServico administradorServico) => {
+    var validacao = new ErrosDeValidacao{
+        Mensagens = new List<string>()
+    };
+
+    if(string.IsNullOrEmpty(administradorDTO.Email))
+        validacao.Mensagens.Add("Email não pode ser vazio.");
+    if(string.IsNullOrEmpty(administradorDTO.Senha))
+        validacao.Mensagens.Add("Senha não pode ser vazia.");
+    if(administradorDTO.Perfil == null)
+        validacao.Mensagens.Add("Perfil não pode ser vazio.");
+
+    if(validacao.Mensagens.Count > 0)
+        return Results.BadRequest(validacao);  
+
+    var veiculo = new Administrador{
+        Email = administradorDTO.Email,
+        Senha = administradorDTO.Senha,
+        Perfil = administradorDTO.Perfil.ToString() ?? Perfil.editor.ToString()
+     };
+    administradorServico.Incluir(veiculo);
+    return Results.Created($"/administrador/{veiculo.Id}", veiculo);        
+    
 }).WithTags("Administradores");
 #endregion
 
