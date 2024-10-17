@@ -38,7 +38,7 @@ namespace miminal.Infraestrutura.Db
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var stringConexao = _configuracaoAppSettings.GetConnectionString("mysql")?.ToString();
+                var stringConexao = _configuracaoAppSettings.GetConnectionString("MySql")?.ToString();
                 if (!string.IsNullOrEmpty(stringConexao))
                 {
                     optionsBuilder.UseMySql(
