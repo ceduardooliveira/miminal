@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using miminal.Dominio.Entidades;
 
-namespace Test.Domain
+namespace Test.Domain.Entidades
 {
     public class AdministradorTest
     {
